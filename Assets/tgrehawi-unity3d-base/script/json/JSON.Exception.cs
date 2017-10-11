@@ -20,12 +20,23 @@ namespace tgrehawi {
       }
     }
 
-    public class NoSuchFieldException : Exception {
+    public class InvalidValueException : Exception {
+
+      public readonly Value value;
+
+      public InvalidValueException(Value value, string message)
+        : base(string.Format("Error: {0}\nValue: {1}", message, value.value)) {
+        this.value = value;
+      }
+
+    }
+
+    public class NoSuchKeyException : Exception {
 
       public readonly Object obj;
       public readonly string key;
 
-      public NoSuchFieldException(Object obj, string key)
+      public NoSuchKeyException(Object obj, string key)
         : base(string.Format("Object {0} does not contain a field for key {1}", obj, key)) {
         this.obj = obj;
         this.key = key;

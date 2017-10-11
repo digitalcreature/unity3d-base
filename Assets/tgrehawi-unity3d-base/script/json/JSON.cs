@@ -39,6 +39,16 @@ namespace tgrehawi {
       }
 
       public bool isNull { get { return value == null; } }
+      public bool isNumber {
+        get {
+          return value.GetType().IsPrimitive && !(
+            value is char ||
+            value is bool ||
+            value is IntPtr ||
+            value is UIntPtr
+          );
+        }
+      }
 
       public Value(object value) {
         this.value = value is Value ? ((Value) value).value : value;
@@ -51,6 +61,10 @@ namespace tgrehawi {
 
       public static implicit operator List(Value value) { return value.listValue; }
       public static implicit operator Object(Value value) { return value.objectValue; }
+
+      public T As<T>() {
+        return (T) value;
+      }
 
       public override bool Equals(object obj) {
         if (obj is Value) {
@@ -100,7 +114,7 @@ namespace tgrehawi {
               return pair.Value;
             }
           }
-          throw new NoSuchFieldException(this, key);
+          throw new NoSuchKeyException(this, key);
         }
         set {
           if (key == null) throw new NullKeyException();
@@ -209,10 +223,10 @@ namespace tgrehawi {
         return GetEnumerator();
       }
 
-      static void CopyTo<T>(T[] array, int arrayIndex, int count, System.Func<int, T> get) {
-        if (array == null) throw new System.ArgumentNullException();
-        if (arrayIndex < 0) throw new System.ArgumentOutOfRangeException();
-        if ((array.Length - arrayIndex) < count) throw new System.ArgumentException();
+      static void CopyTo<T>(T[] array, int arrayIndex, int count, Func<int, T> get) {
+        if (array == null) throw new ArgumentNullException();
+        if (arrayIndex < 0) throw new ArgumentOutOfRangeException();
+        if ((array.Length - arrayIndex) < count) throw new ArgumentException();
         for (int i = 0; i < count; i ++) {
           array[arrayIndex + i] = get(i);
         }
